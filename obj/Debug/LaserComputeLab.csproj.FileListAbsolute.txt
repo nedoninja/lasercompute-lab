@@ -1,0 +1,12 @@
+C:\Users\79333\source\repos\LaserComputeLab\bin\Debug\LaserComputeLab.exe.config
+C:\Users\79333\source\repos\LaserComputeLab\bin\Debug\LaserComputeLab.exe
+C:\Users\79333\source\repos\LaserComputeLab\bin\Debug\LaserComputeLab.pdb
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.csproj.AssemblyReference.cache
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.csproj.SuggestedBindingRedirects.cache
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.Form1.resources
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.Properties.Resources.resources
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.csproj.GenerateResource.cache
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.csproj.CoreCompileInputs.cache
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.exe
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.pdb
+C:\Users\79333\source\repos\LaserComputeLab\obj\Debug\LaserComputeLab.ManagerCOM.resources
