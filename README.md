@@ -6,5 +6,6 @@
     cd lasercompute-lab/
     source venv/bin/activate    #if use *NIX
     venv\Scripts\activate.bat  #if use windows
+    pip install -r requirements.txt
     python main.py
 ```
