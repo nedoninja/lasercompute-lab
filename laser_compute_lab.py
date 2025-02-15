@@ -111,6 +111,13 @@ class LaserComputeLab(QMainWindow):
         pred_layout.addRow(self.compute_btn)
         pred_group.setLayout(pred_layout)
 
+        output_group = QGroupBox("Выходные данные")
+        output_layout = QVBoxLayout()
+        self.text_box = QLineEdit()
+        self.text_box.setReadOnly(True)
+        output_layout.addWidget(self.text_box)
+        output_group.setLayout(output_layout)
+
         correct_group = QGroupBox("Коректировка")
         correct_layout = QFormLayout()
 
@@ -125,13 +132,6 @@ class LaserComputeLab(QMainWindow):
         correct_layout.addRow("Потолок единицы:", self.roof)
         correct_layout.addRow(self.correct_btn)
         correct_group.setLayout(correct_layout)
-
-        output_group = QGroupBox("Выходные данные")
-        output_layout = QVBoxLayout()
-        self.text_box = QLineEdit()
-        self.text_box.setReadOnly(True)
-        output_layout.addWidget(self.text_box)
-        output_group.setLayout(output_layout)
 
         self.debug_group = QGroupBox("Debug-информация")
         debug_layout = QVBoxLayout()
@@ -148,8 +148,8 @@ class LaserComputeLab(QMainWindow):
 
         layout.addWidget(input_group)
         layout.addWidget(pred_group)
+        layout.addWidget(output_group)  # Выходные данные выше корректировки
         layout.addWidget(correct_group)
-        layout.addWidget(output_group)
         layout.addWidget(self.debug_group)
         panel.setLayout(layout)
         self.main_panel.addWidget(panel)
