@@ -3,6 +3,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from com_manager import ComManager
 from serial_thread import SerialThread
+from debug_io_console import DebugIOConsole
 
 
 class LaserComputeLab(QMainWindow):
@@ -11,6 +12,7 @@ class LaserComputeLab(QMainWindow):
         self.serial_port = None
         self.databuffer = ""
         self.mode = 0
+        self.correct_check_state = True
         self.init_ui()
         self.start_serial_thread()
 
@@ -22,6 +24,7 @@ class LaserComputeLab(QMainWindow):
         self.addToolBar(Qt.ToolBarArea.TopToolBarArea, toolbar)
 
         self.run_button = QAction("Запуск вычисления", self)
+        self.run_button.triggered.connect(self.run_calculation)
         toolbar.addAction(self.run_button)
 
         tools_menu = QToolButton()
@@ -36,8 +39,18 @@ class LaserComputeLab(QMainWindow):
         self.debug_action.setCheckable(True)
         self.debug_action.toggled.connect(self.toggle_debug)
 
+        self.correct_check_action = QAction("Проверка на корректность", self)
+        self.correct_check_action.setCheckable(True)
+        self.correct_check_action.setChecked(True)
+        self.correct_check_action.toggled.connect(self.toggle_correct_check)
+
+        self.debug_io_action = QAction("Отладка через I/O консоль", self)
+        self.debug_io_action.triggered.connect(self.show_debug_io_console)
+
         menu.addAction(self.com_manager_action)
         menu.addAction(self.debug_action)
+        menu.addAction(self.correct_check_action)
+        menu.addAction(self.debug_io_action)
         tools_menu.setMenu(menu)
         toolbar.addWidget(tools_menu)
 
@@ -113,9 +126,11 @@ class LaserComputeLab(QMainWindow):
 
         output_group = QGroupBox("Выходные данные")
         output_layout = QVBoxLayout()
-        self.text_box = QLineEdit()
-        self.text_box.setReadOnly(True)
-        output_layout.addWidget(self.text_box)
+        self.output_data = QLineEdit()
+        self.output_data.setReadOnly(True)
+        self.correct_check_label = QLabel()
+        output_layout.addWidget(self.output_data)
+        output_layout.addWidget(self.correct_check_label)
         output_group.setLayout(output_layout)
 
         correct_group = QGroupBox("Коректировка")
@@ -148,7 +163,7 @@ class LaserComputeLab(QMainWindow):
 
         layout.addWidget(input_group)
         layout.addWidget(pred_group)
-        layout.addWidget(output_group)  # Выходные данные выше корректировки
+        layout.addWidget(output_group)
         layout.addWidget(correct_group)
         layout.addWidget(self.debug_group)
         panel.setLayout(layout)
@@ -189,9 +204,47 @@ class LaserComputeLab(QMainWindow):
                 elif line.startswith("Roof"):
                     self.roof.setText(line.split()[1])
             self.databuffer = ""
+        elif self.mode == 2 and "-----" in self.databuffer:
+            lines = [line.strip() for line in self.databuffer.split('\n') if line.strip()]
+            self.output_data.setText(lines[7])
+            if self.correct_check_state:
+                if self.output_data.text() == self.result_prob.text():
+                    self.correct_check_label.setText("Корректный ответ")
+                else:
+                    self.correct_check_label.setText("Некорректный ответ")
+            self.databuffer = ""
 
     def toggle_debug(self, checked):
         self.debug_group.setVisible(checked)
+
+    def toggle_correct_check(self, checked):
+        self.correct_check_state = checked
+
+    def show_debug_io_console(self):
+        if self.serial_port:
+            dialog = DebugIOConsole(self, self.serial_port)
+            dialog.exec()
+
+    def run_calculation(self):
+        try:
+            a = self.num_a.value()
+            b = self.num_b.value()
+            self.result_prob.setText(self.summator_1bit_sim(a, b))
+            if self.serial_port and self.serial_port.is_open:
+                data = f"{a} {b}"
+                self.serial_port.write(data.encode('ascii'))
+                self.databuffer = ""
+                self.mode = 2
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Ошибка вычислений: {str(e)}")
+
+    def summator_1bit_sim(self, a, b):
+        if a == 1 and b == 1:
+            return "10"
+        elif a == 1 or b == 1:
+            return "01"
+        else:
+            return "00"
 
     def closeEvent(self, event):
         if self.serial_port and self.serial_port.is_open:

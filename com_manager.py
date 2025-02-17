@@ -90,3 +90,14 @@ class ComManager(QDialog):
         self.parent.connected_status.setText("Не подключено")
         self.disconnect_btn.setEnabled(False)
         self.connect_btn.setEnabled(True)
+
+    def get_port(self):
+        return self.serial_port
+
+    def get_portname(self):
+        return self.port_combo.currentText()
+
+    def get_data_received(self):
+        if self.serial_port and self.serial_port.is_open:
+            return self.serial_port.read_all().decode('ascii', errors='ignore')
+        return ""
